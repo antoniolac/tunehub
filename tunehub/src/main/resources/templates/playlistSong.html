@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Playlist Dettagli</title>
+    <title>Dettagli Playlist</title>
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
@@ -22,10 +22,11 @@
         </nav>
     </header>
     <main>
+        <!-- Visualizza il nome della playlist -->
         <h3>Dettagli Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
         <div class="orange-border"></div>
 
-        <!-- Se la playlist è vuota -->
+        <!-- Messaggio di errore se la playlist non viene trovata -->
         <div th:if="${message != null}">
             <p th:text="${message}"></p>
         </div>
@@ -34,11 +35,17 @@
         <div th:if="${canzoni != null}">
             <h4>Canzoni nella playlist:</h4>
             <ul>
-                <li th:each="canzone : ${canzoni}" th:text="${canzone.nome}">Nome canzone</li>
+                <li th:each="canzone : ${canzoni}" th:text="${canzone.titolo}">Nome canzone</li>
             </ul>
+        </div>
+
+        <!-- Messaggio se la playlist è vuota -->
+        <div th:if="${canzoni == null or canzoni.isEmpty()}">
+            <p>Questa playlist è vuota.</p>
         </div>
     </main>
     <footer>
+        <!-- Footer, puoi aggiungere ulteriori contenuti qui -->
     </footer>
 </div>
 </body>

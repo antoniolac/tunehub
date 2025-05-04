@@ -1,50 +1,45 @@
 package com.example.tunehub.POJO;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class Playlist {
-    private Lista listaCanzoni;  // Lista di canzoni che rappresenta la playlist
+    private List<Song> listaCanzoni;  // Lista di canzoni che rappresenta la playlist
     private String nomePlaylist; // Nome della playlist
 
     // Costruttore che inizializza la lista e il nome della playlist
     public Playlist() {
         this.nomePlaylist = "";
-        this.listaCanzoni = new Lista();
+        this.listaCanzoni = new ArrayList<>(); // Inizializza la lista come ArrayList
     }
 
     public Playlist(String nomePlaylist) {
         this.nomePlaylist = nomePlaylist;
-        this.listaCanzoni = new Lista();  // Crea una nuova lista vuota
+        this.listaCanzoni = new ArrayList<>();  // Crea una nuova lista vuota
     }
 
     // Metodo per aggiungere una canzone alla playlist
     public void aggiungiCanzone(Song song) {
-        listaCanzoni.inserisciInCoda(song);  // Aggiungi la canzone in coda alla playlist
+        listaCanzoni.add(song);  // Aggiungi la canzone alla lista
     }
 
     // Metodo per rimuovere una canzone dalla playlist
     public void rimuoviCanzone(Song song) {
-        Nodo corrente = listaCanzoni.getTesta();
-        Nodo precedente = null;
-
-        // Scorri la lista per trovare la canzone da rimuovere
-        while (corrente != null) {
-            if (corrente.getInfo().equals(song)) {
-                if (precedente == null) {
-                    listaCanzoni.cancInTesta();  // Se la canzone è in testa
-                } else {
-                    precedente.setLink(corrente.getLink());  // Se la canzone non è in testa
-                }
-                return;
-            }
-            precedente = corrente;
-            corrente = corrente.getLink();
+        if (listaCanzoni.contains(song)) {
+            listaCanzoni.remove(song);  // Rimuovi la canzone dalla lista
+        } else {
+            System.out.println("Canzone non trovata nella playlist.");
         }
-        System.out.println("Canzone non trovata nella playlist.");
     }
 
     // Metodo per visualizzare la playlist (titoli delle canzoni)
     public String visualizzaPlaylist() {
-        return "Playlist: " + nomePlaylist + "\n" + listaCanzoni.elencoNodi();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Playlist: ").append(nomePlaylist).append("\n");
+        for (Song song : listaCanzoni) {
+            sb.append(song.getTitle()).append(" -> ");
+        }
+        return sb.append("null").toString();
     }
 
     // Getter e Setter per nomePlaylist
@@ -57,8 +52,7 @@ public class Playlist {
     }
 
     // Getter per la lista di canzoni
-    public Lista getListaCanzoni() {
+    public List<Song> getListaCanzoni() {
         return listaCanzoni;
     }
 }
-

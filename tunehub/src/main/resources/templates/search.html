@@ -3,9 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>Risultati Ricerca</title>
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
-PAGINA DI RICERCA
+<div class="hero">
+    <header class="header">
+        <figure>
+            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="">
+        </figure>
+        <nav>
+            <form action="/search" method="post">
+                <input type="text" name="searchQuery" placeholder="Cerca una canzone" required />
+                <button type="submit">Cerca</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        <h3>Risultati della ricerca</h3>
+        <div class="orange-border"></div>
+
+        <!-- Messaggio se non ci sono risultati -->
+        <div th:if="${message != null}">
+            <p th:text="${message}"></p>
+        </div>
+
+        <!-- Visualizzazione delle tracce -->
+        <div th:if="${tracks != null}">
+            <h4>Canzoni trovate:</h4>
+            <ul>
+                <li th:each="track : ${tracks}">
+                    <a th:href="@{${track.external_urls.spotify}}" target="_blank">
+                        <span th:text="${track.name}">Nome canzone</span> -
+                        <span th:each="artist : ${track.artists}" th:text="${artist.name}">Artista</span>
+                    </a>
+                    <audio th:src="${track.preview_url}" controls></audio>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <footer></footer>
+</div>
 </body>
 </html>

@@ -19,9 +19,10 @@ public class SpotifyController {
         this.spotifyService = spotifyService;
     }
 
+    // Endpoint per cercare le tracce per titolo
     @GetMapping("/search")
-    public List<Map<String, Object>> searchTracks(@RequestParam String query) {
-        return spotifyService.searchTracks(query);
+    public List<Map<String, Object>> searchTracks(@RequestParam("title") String title) {
+        // Usa il SpotifyService per cercare le tracce
+        return spotifyService.searchTracks(title); // Restituisce la lista delle tracce in formato JSON
     }
 }
-

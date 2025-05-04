@@ -1,19 +1,23 @@
 package com.example.tunehub.Controller;
 
 import com.example.tunehub.POJO.Playlist;
+import com.example.tunehub.POJO.Song;
+import com.example.tunehub.SpotifyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AppController {
+
     private final List<Playlist> playlistList = new ArrayList<>();  // Lista delle playlist
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/")
     public String home(Model model) {
@@ -31,7 +35,12 @@ public class AppController {
     private List<String> getNomiPlaylist() {
         List<String> nomi = new ArrayList<>();
         for (Playlist p : playlistList) {
-            nomi.add(p.getNomePlaylist());  // Aggiungi il nome della playlist alla lista
+            try {
+                String encoded = java.net.URLEncoder.encode(p.getNomePlaylist(), java.nio.charset.StandardCharsets.UTF_8.toString());
+                nomi.add(encoded);  // Aggiungi la versione codificata
+            } catch (Exception e) {
+                nomi.add(p.getNomePlaylist());  // In caso di errore, aggiungi il nome normale
+            }
         }
         return nomi;
     }
@@ -39,6 +48,14 @@ public class AppController {
     // Quando clicchi su una playlist, mostra le canzoni aggiunte
     @GetMapping("/playlist/{nomePlaylist}")
     public String mostraCanzoni(@PathVariable("nomePlaylist") String nomePlaylist, Model model) {
+        // Decodifica il nomePlaylist se è stato codificato nell'URL
+        try {
+            nomePlaylist = java.net.URLDecoder.decode(nomePlaylist, java.nio.charset.StandardCharsets.UTF_8.toString());
+        } catch (Exception e) {
+            model.addAttribute("message", "Errore nella decodifica del nome della playlist.");
+            return "playlist_error";
+        }
+
         Playlist playlistSelezionata = null;
 
         // Cerca la playlist con il nome specificato
@@ -54,15 +71,34 @@ public class AppController {
             return "playlist_error";  // Se la playlist non viene trovata, visualizza la pagina di errore
         }
 
-        // Se la playlist è vuota
         if (playlistSelezionata.getListaCanzoni().isEmpty()) {
             model.addAttribute("message", "Questa playlist è vuota.");
         } else {
-            // Se la playlist contiene canzoni, passiamo le canzoni al modello
             model.addAttribute("playlist", playlistSelezionata);
-            model.addAttribute("canzoni", playlistSelezionata.getListaCanzoni());  // Lista delle canzoni
+            model.addAttribute("canzoni", playlistSelezionata.getListaCanzoni());
         }
 
         return "playlistSong";
+    }
+
+    @Autowired
+    private SpotifyService spotifyService;
+
+    // Endpoint per la ricerca delle tracce
+    @PostMapping("/search")
+    public String search(@ModelAttribute("searchQuery") String query, Model model) {
+        // Chiamata all'API REST per la ricerca delle tracce
+        String url = "http://localhost:8080/api/music/search?title=" + query;
+
+        // Esegui la chiamata GET per ottenere i risultati
+        List<Map<String, Object>> tracks = restTemplate.getForObject(url, List.class);
+
+        if (tracks != null && !tracks.isEmpty()) {
+            model.addAttribute("tracks", tracks); // Passa i risultati delle tracce alla vista
+        } else {
+            model.addAttribute("message", "Nessuna canzone trovata.");
+        }
+
+        return "search"; // Ritorna alla stessa pagina (search.html)
     }
 }

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Playlist Dettagli</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div class="hero">
+    <header class="header">
+        <figure>
+            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="">
+        </figure>
+        <nav>
+            <form action="/search" method="post">
+                <button id="search-btn" type="submit" value="">Search</button>
+            </form>
+            <figure>
+                <img src="/images/user%20preview%201.png" alt="">
+            </figure>
+        </nav>
+    </header>
+    <main>
+        <h3>Dettagli Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
+        <div class="orange-border"></div>
+
+        <!-- Se la playlist è vuota -->
+        <div th:if="${message != null}">
+            <p th:text="${message}"></p>
+        </div>
+
+        <!-- Visualizzazione delle canzoni nella playlist -->
+        <div th:if="${canzoni != null}">
+            <h4>Canzoni nella playlist:</h4>
+            <ul>
+                <li th:each="canzone : ${canzoni}" th:text="${canzone.nome}">Nome canzone</li>
+            </ul>
+        </div>
+    </main>
+    <footer>
+    </footer>
+</div>
+</body>
+</html>

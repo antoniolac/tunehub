@@ -6,6 +6,11 @@ public class Playlist {
     private String nomePlaylist; // Nome della playlist
 
     // Costruttore che inizializza la lista e il nome della playlist
+    public Playlist() {
+        this.nomePlaylist = "";
+        this.listaCanzoni = new Lista();
+    }
+
     public Playlist(String nomePlaylist) {
         this.nomePlaylist = nomePlaylist;
         this.listaCanzoni = new Lista();  // Crea una nuova lista vuota

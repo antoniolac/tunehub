@@ -1,120 +1,72 @@
 package com.example.tunehub.POJO;
 
 public class Lista {
-    private Nodo testa;
+    private Nodo Testa;
 
-    // Costruttore per inizializzare la lista
     public Lista() {
-        testa = null;
+        Testa = null;
     }
 
-    // Crea un nodo che contiene una canzone (oggetto Song)
-    private Nodo creaNodo(Song song, Nodo link) {
-        Nodo nuovoNodo = new Nodo(song);
+    private Nodo creaNodo(Song canzone, Nodo link) {
+        Nodo nuovoNodo = new Nodo(canzone);
         nuovoNodo.setLink(link);
         return nuovoNodo;
     }
 
-    // Aggiungi una canzone in testa alla lista
-    public void inserisciInTesta(Song song) {
-        testa = creaNodo(song, testa);
+    // Inserimento in testa
+    public void inserisciInTesta(Song canzone) {
+        Testa = creaNodo(canzone, Testa);
     }
 
-    // Aggiungi una canzone in coda alla lista
-    public void inserisciInCoda(Song song) {
-        if (testa == null) {
-            inserisciInTesta(song);  // Se la lista è vuota, aggiunge in testa
-            return;
-        }
-
-        Nodo corrente = testa;
-        while (corrente.getLink() != null) {
-            corrente = corrente.getLink();  // Scorre fino all'ultimo nodo
-        }
-        corrente.setLink(creaNodo(song, null));  // Aggiunge la canzone in coda
-    }
-
-    // Rimuovi la canzone in testa
     public void cancInTesta() {
-        if (testa == null) {
+        if (Testa == null) {
             System.out.println("Lista vuota");
             return;
         }
-        testa = testa.getLink();  // Rimuove il nodo che sta in testa
+        Testa = Testa.getLink();
     }
 
-    // Rimuovi la canzone in coda
-    public void cancInCoda() {
-        if (testa == null) {
-            System.out.println("Lista vuota");
+    // Inserimento in coda
+    public void inserisciInCoda(Song canzone) {
+        if (Testa == null) {
+            inserisciInTesta(canzone);
             return;
         }
 
-        if (testa.getLink() == null) {
-            testa = null;  // Se c'è solo un nodo, lo rimuove
-            return;
+        Nodo pCurr = Testa;
+        while (pCurr.getLink() != null) {
+            pCurr = pCurr.getLink();
         }
-
-        Nodo corrente = testa;
-        Nodo precedente = null;
-
-        // Scorre fino all'ultimo nodo
-        while (corrente.getLink() != null) {
-            precedente = corrente;
-            corrente = corrente.getLink();
-        }
-
-        precedente.setLink(null);  // Rimuove il nodo in coda
+        pCurr.setLink(creaNodo(canzone, null));
     }
 
-    // Aggiungi una canzone in una posizione specifica
-    public void inserisciInPosizione(Song song, int posizione) {
-        if (posizione < 0) {
-            System.out.println("Posizione non valida");
-            return;
-        }
-
-        if (posizione == 0) {
-            inserisciInTesta(song);  // Se la posizione è 0, inserisce in testa
-            return;
-        }
-
-        Nodo corrente = testa;
-        int contatore = 0;
-
-        // Scorre fino alla posizione specificata
-        while (corrente != null && contatore < posizione - 1) {
-            corrente = corrente.getLink();
-            contatore++;
-        }
-
-        // Aggiunge la canzone alla posizione corretta
-        if (corrente != null) {
-            Nodo nuovoNodo = creaNodo(song, corrente.getLink());
-            corrente.setLink(nuovoNodo);
-        } else {
-            System.out.println("Posizione oltre la lunghezza della lista");
-        }
+    // Verifica se la lista è vuota
+    public boolean isEmpty() {
+        return Testa == null;
     }
 
-    // Restituisce la rappresentazione della lista di canzoni
+    // Ottieni la lista delle canzoni (senza conversioni in List)
+    public Nodo getTesta() {
+        return Testa;
+    }
+
+    // Restituisci la lista di canzoni
     public String elencoNodi() {
-        return visita(testa);
+        return visita(Testa);
     }
 
-    // Metodo privato che scorre i nodi e restituisce l'elenco delle canzoni
-    private String visita(Nodo nodoCorrente) {
+    private String visita(Nodo currNodo) {
         StringBuilder sb = new StringBuilder();
-        while (nodoCorrente != null) {
-            sb.append(nodoCorrente.getInfo().getTitle())  // Usa il metodo getTitle() di Song
-                    .append(" -> ");
-            nodoCorrente = nodoCorrente.getLink();
+        while (currNodo != null) {
+            sb.append(currNodo.getInfo().getTitle()).append(" -> ");
+            currNodo = currNodo.getLink();
         }
         sb.append("null");
         return sb.toString();
     }
 
-    public Nodo getTesta() {
-        return testa;
+    // Metodo per ottenere tutte le canzoni
+    public Nodo getCanzoni() {
+        return Testa;
     }
 }

@@ -4,32 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
-    <div class="hero">
-        <header class="header">
+<div class="hero">
+    <header class="header">
+        <figure>
+            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="">
+        </figure>
+        <nav>
+            <form action="/search" method="post">
+                <button id="search-btn" type="submit" value="">Search</button>
+            </form>
             <figure>
-                <img src="../static/images/tune-removebg-preview%20(1)%201.png" alt="">
+                <img src="/images/user%20preview%201.png" alt="">
             </figure>
-            <nav>
-                <input type="text" name="" id="">
-                <figure>
-                    <img src="../static/images/search%201.png" alt="">
-                </figure>
-            </nav>
-            <figure>
-                <img src="../static/images/user%20preview%201.png" alt="">
-            </figure>
-        </header>
-        <main>
-            <h1>MY PLAYLIST</h1>
+        </nav>
+    </header>
+    <main>
+        <h3>MY PLAYLIST</h3>
         <div class="orange-border"></div>
 
-        </main>
-        <footer>
+        <!-- FORM CREAZIONE PLAYLIST -->
+        <form th:action="@{/playlist}" th:object="${playlistForm}" method="post">
+            <label for="nomePlaylist">Nome nuova playlist:</label>
+            <input type="text" id="nomePlaylist" th:field="*{nomePlaylist}" required>
+            <button type="submit">Aggiungi</button>
+        </form>
 
-        </footer>
-    </div>
+        <!-- VISUALIZZAZIONE PLAYLIST -->
+        <div>
+            <h4>Playlist create:</h4>
+            <ul>
+                <!-- Ciclo per ogni playlist -->
+                <li style="color: white" th:each="item : ${playlists}">
+                    <!-- Cliccando sul nome della playlist, si va alla sua pagina di dettaglio -->
+                    <a th:href="@{'/playlist/' + ${item}}" th:text="${item}">[nome playlist]</a>
+                </li>
+            </ul>
+        </div>
+    </main>
+    <footer>
+    </footer>
+</div>
 </body>
 </html>

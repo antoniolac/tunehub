@@ -9,7 +9,6 @@ public class AppController {
 
     @GetMapping("/home")
     public String home(Model model) {
-
         return "index";
     }
 

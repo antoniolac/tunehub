@@ -45,7 +45,6 @@ public class AppController {
         return nomi;
     }
 
-    // Quando clicchi su una playlist, mostra le canzoni aggiunte
     @GetMapping("/playlist/{nomePlaylist}")
     public String mostraCanzoni(@PathVariable("nomePlaylist") String nomePlaylist, Model model) {
         // Decodifica il nomePlaylist se è stato codificato nell'URL
@@ -53,7 +52,7 @@ public class AppController {
             nomePlaylist = java.net.URLDecoder.decode(nomePlaylist, java.nio.charset.StandardCharsets.UTF_8.toString());
         } catch (Exception e) {
             model.addAttribute("message", "Errore nella decodifica del nome della playlist.");
-            return "playlist_error";
+            return "index";  // Torna alla home se c'è un errore
         }
 
         Playlist playlistSelezionata = null;
@@ -68,37 +67,50 @@ public class AppController {
 
         if (playlistSelezionata == null) {
             model.addAttribute("message", "Playlist non trovata");
-            return "playlist_error";  // Se la playlist non viene trovata, visualizza la pagina di errore
+            return "index";  // Torna alla home se la playlist non viene trovata
         }
 
+        // Passa l'oggetto playlist alla vista solo se non è null
+        model.addAttribute("playlist", playlistSelezionata);
         if (playlistSelezionata.getListaCanzoni().isEmpty()) {
             model.addAttribute("message", "Questa playlist è vuota.");
         } else {
-            model.addAttribute("playlist", playlistSelezionata);
             model.addAttribute("canzoni", playlistSelezionata.getListaCanzoni());
         }
 
-        return "playlistSong";
+        return "playlistSong";  // Mostra la vista con le canzoni
     }
+
+
 
     @Autowired
     private SpotifyService spotifyService;
 
     // Endpoint per la ricerca delle tracce
-    @PostMapping("/search")
+    @PostMapping("/research")
     public String search(@ModelAttribute("searchQuery") String query, Model model) {
+        // Verifica che la query non sia vuota
+        if (query == null || query.trim().isEmpty()) {
+            model.addAttribute("message", "Inserisci una query per la ricerca.");
+            return "research"; // Mostra il messaggio e torna alla stessa pagina
+        }
+
         // Chiamata all'API REST per la ricerca delle tracce
         String url = "http://localhost:8080/api/music/search?title=" + query;
 
         // Esegui la chiamata GET per ottenere i risultati
-        List<Map<String, Object>> tracks = restTemplate.getForObject(url, List.class);
-
-        if (tracks != null && !tracks.isEmpty()) {
-            model.addAttribute("tracks", tracks); // Passa i risultati delle tracce alla vista
-        } else {
-            model.addAttribute("message", "Nessuna canzone trovata.");
+        try {
+            List<Map<String, Object>> tracks = restTemplate.getForObject(url, List.class);
+            if (tracks != null && !tracks.isEmpty()) {
+                model.addAttribute("tracks", tracks); // Passa i risultati delle tracce alla vista
+            } else {
+                model.addAttribute("message", "Nessuna canzone trovata.");
+            }
+        } catch (Exception e) {
+            model.addAttribute("message", "Errore nella ricerca delle tracce.");
         }
 
-        return "search"; // Ritorna alla stessa pagina (search.html)
+        return "research"; // Ritorna alla stessa pagina (research.html)
     }
+
 }

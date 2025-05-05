@@ -1,0 +1,35 @@
+#nomePlaylist{
+    padding: 10px 15px;
+    border: 2px solid orange;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+    width: 200px;
+    font-size: 16px;
+    background-color: orange;
+}
+
+label{
+    color: white;
+    padding-left: 53px;
+}
+
+#add-btn{
+    padding: 10px 15px;
+    background-color: orange;
+    color: black;
+    border: 2px solid orange;
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#add-btn:hover{
+    background-color: darkorange;
+}
+
+#add-btn::placeholder {
+    color: black;                /* colore del placeholder */
+    opacity: 1
+}

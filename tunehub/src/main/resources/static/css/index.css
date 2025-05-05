@@ -5,6 +5,7 @@
 @import "title.css";
 @import "border.css";
 @import "button.css";
+@import "search-bar.css";
 
 body {
     margin: 0;

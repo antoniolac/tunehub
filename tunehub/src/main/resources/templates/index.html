@@ -15,7 +15,7 @@
         <nav>
             <form action="/research" method="post">
                 <input name="searchQuery" placeholder="Cerca una canzone" required type="text">
-                <button type="submit">Cerca</button>
+                <button type="submit">Search</button>
             </form>
             <figure>
                 <img src="/images/user%20preview%201.png" alt="">
@@ -23,14 +23,14 @@
         </nav>
     </header>
     <main>
-        <h3>MY PLAYLIST</h3>
-        <div class="orange-border"></div>
 
+        <hr class="orange-border">
+        <h3>MY PLAYLIST</h3>
         <!-- FORM CREAZIONE PLAYLIST -->
         <form th:action="@{/playlist}" th:object="${playlistForm}" method="post">
             <label for="nomePlaylist">Nome nuova playlist:</label>
             <input type="text" id="nomePlaylist" th:field="*{nomePlaylist}" required>
-            <button type="submit">Aggiungi</button>
+            <button type="submit" id="add-btn">Aggiungi</button>
         </form>
 
         <!-- VISUALIZZAZIONE PLAYLIST -->

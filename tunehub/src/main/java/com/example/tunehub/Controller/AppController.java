@@ -88,29 +88,40 @@ public class AppController {
 
     // Endpoint per la ricerca delle tracce
     @PostMapping("/research")
-    public String search(@ModelAttribute("searchQuery") String query, Model model) {
-        // Verifica che la query non sia vuota
-        if (query == null || query.trim().isEmpty()) {
-            model.addAttribute("message", "Inserisci una query per la ricerca.");
-            return "research"; // Mostra il messaggio e torna alla stessa pagina
-        }
+    public String ricercaCanzoni(@RequestParam("searchQuery") String searchQuery, Model model) {
+        // Cerca canzoni (questa parte dipende dalla tua implementazione della ricerca)
+        List<Map<String, Object>> tracks = spotifyService.searchTracks(searchQuery);  // Usa il servizio per cercare tracce
 
-        // Chiamata all'API REST per la ricerca delle tracce
-        String url = "http://localhost:8080/api/music/search?title=" + query;
-
-        // Esegui la chiamata GET per ottenere i risultati
-        try {
-            List<Map<String, Object>> tracks = restTemplate.getForObject(url, List.class);
-            if (tracks != null && !tracks.isEmpty()) {
-                model.addAttribute("tracks", tracks); // Passa i risultati delle tracce alla vista
-            } else {
-                model.addAttribute("message", "Nessuna canzone trovata.");
-            }
-        } catch (Exception e) {
-            model.addAttribute("message", "Errore nella ricerca delle tracce.");
-        }
-
-        return "research"; // Ritorna alla stessa pagina (research.html)
+        // Passa i risultati alla vista
+        model.addAttribute("tracks", tracks);
+        model.addAttribute("playlists", getNomiPlaylist());  // Passa le playlist esistenti
+        return "research";  // La vista che mostra i risultati della ricerca
     }
+
+    // Endpoint per aggiungere una traccia alla playlist
+    @PostMapping("/playlist/{nomePlaylist}/add")
+    public String aggiungiCanzone(@PathVariable("nomePlaylist") String nomePlaylist,
+                                  @RequestParam("trackName") String trackName,
+                                  @RequestParam("trackArtist") String trackArtist,
+                                  Model model) {
+        // Cerca la playlist per nome
+        Playlist playlist = playlistList.stream()
+                .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                .findFirst()
+                .orElse(null);
+
+        if (playlist == null) {
+            model.addAttribute("message", "Playlist non trovata!");
+            return "redirect:/";  // Se la playlist non esiste, reindirizza
+        }
+
+        // Aggiungi la canzone alla playlist usando solo il nome e l'artista
+        playlist.aggiungiCanzone(trackName, trackArtist);  // Aggiungi la canzone alla playlist
+        model.addAttribute("playlist", playlist);
+        model.addAttribute("message", "Canzone aggiunta alla playlist!");
+
+        return "playlistDetails";  // Dettaglio della playlist aggiornata
+    }
+
 
 }

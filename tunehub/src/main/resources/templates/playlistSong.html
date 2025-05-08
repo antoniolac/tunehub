@@ -19,7 +19,7 @@
             </form>
         </nav>
     </header>
-    <main>
+    <main style="color :white">
         <h3>Dettagli Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
         <div class="orange-border"></div>
 
@@ -32,13 +32,12 @@
         <div th:if="${canzoni != null}">
             <h4>Canzoni nella playlist:</h4>
             <ul>
-                <li th:each="canzone : ${canzoni}" th:text="${canzone.titolo}">Nome canzone</li>
+                <!-- Ciclo per visualizzare ogni canzone (titolo e artista) -->
+                <li th:each="canzone : ${canzoni}">
+                    <span th:text="${canzone[0]}">Titolo della canzone</span> -
+                    <span th:text="${canzone[1]}">Artista della canzone</span>
+                </li>
             </ul>
-        </div>
-
-        <!-- Messaggio se la playlist è vuota -->
-        <div th:if="${canzoni == null or canzoni.isEmpty()}">
-            <p>Questa playlist è vuota.</p>
         </div>
     </main>
 </div>

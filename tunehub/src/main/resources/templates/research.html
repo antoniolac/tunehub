@@ -10,7 +10,7 @@
 <div class="hero">
     <header class="header">
         <figure>
-            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="">
+            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
         </figure>
         <nav>
             <form action="/research" method="post">
@@ -39,6 +39,14 @@
                         <span th:each="artist : ${track.artists}" th:text="${artist.name}">Artista</span>
                     </a>
                     <audio th:src="${track.preview_url}" controls></audio>
+
+                    <!-- Form per aggiungere la canzone alla playlist -->
+                    <form th:action="@{/playlist/{nomePlaylist}/add(trackName=${track.name}, trackArtist=${track.artists[0].name})}" method="post" style="display:inline;">
+                        <select name="nomePlaylist" required>
+                            <option th:each="playlist : ${playlists}" th:value="${playlist}" th:text="${playlist}"></option>
+                        </select>
+                        <button type="submit">Aggiungi alla Playlist</button>
+                    </form>
                 </li>
             </ul>
         </div>

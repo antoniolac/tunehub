@@ -1,69 +1,61 @@
 package com.example.tunehub.POJO;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PlaylistManager {
-    private static final String CSV_FILE = "data/playlists.csv";
+
+    private static final String FILE_PATH = "playlists.csv";
 
     public static List<Playlist> caricaPlaylist() throws IOException {
         List<Playlist> playlists = new ArrayList<>();
-        File file = new File(CSV_FILE);
+        BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+        String line;
 
-        if (!file.exists()) {
-            return playlists;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(",");
+            String nomePlaylist = parts[0];
+            List<String> canzoni = Arrays.stream(parts, 1, parts.length).collect(Collectors.toList());
+            Playlist playlist = new Playlist(nomePlaylist);
+            playlist.setListaCanzoni(canzoni);
+            playlists.add(playlist);
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length >= 1) {
-                    Playlist p = new Playlist(parts[0]);
-                    for (int i = 1; i < parts.length; i++) {
-                        p.aggiungiCanzone(parts[i]);
-                    }
-                    playlists.add(p);
-                }
-            }
-        }
+        reader.close();
         return playlists;
     }
 
     public static void salvaPlaylist(List<Playlist> playlists) throws IOException {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(CSV_FILE, StandardCharsets.UTF_8))) {
-            for (Playlist p : playlists) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(p.getNomePlaylist());
-                for (String canzone : p.getListaCanzoni()) {
-                    sb.append(";").append(canzone);
-                }
-                pw.println(sb.toString());
-            }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH));
+        for (Playlist playlist : playlists) {
+            String playlistLine = playlist.getNomePlaylist() + "," +
+                    String.join(",", playlist.getListaCanzoni());
+            writer.write(playlistLine);
+            writer.newLine();
         }
+        writer.close();
     }
 
-    public static void aggiungiCanzoneAllaPlaylist(String nomePlaylist, String canzone, String artista) throws IOException {
+    public static void aggiungiCanzoneAllaPlaylist(String nomePlaylist, String trackName, String trackArtist) throws IOException {
         List<Playlist> playlists = caricaPlaylist();
-        boolean trovata = false;
+        Playlist playlist = playlists.stream()
+                .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                .findFirst()
+                .orElseThrow(() -> new IOException("Playlist non trovata"));
 
-        for (Playlist p : playlists) {
-            if (p.getNomePlaylist().equals(nomePlaylist)) {
-                String entry = canzone + " - " + artista;
-                if (!p.getListaCanzoni().contains(entry)) {
-                    p.aggiungiCanzone(entry);
-                }
-                trovata = true;
-                break;
-            }
-        }
+        playlist.getListaCanzoni().add(trackName + " - " + trackArtist);
+        salvaPlaylist(playlists);
+    }
 
-        if (!trovata) {
-            throw new IOException("Playlist non trovata");
-        }
+    public static void rimuoviCanzoneDallaPlaylist(String nomePlaylist, String trackName) throws IOException {
+        List<Playlist> playlists = caricaPlaylist();
+        Playlist playlist = playlists.stream()
+                .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                .findFirst()
+                .orElseThrow(() -> new IOException("Playlist non trovata"));
 
+        playlist.getListaCanzoni().removeIf(canzone -> canzone.equals(trackName));
         salvaPlaylist(playlists);
     }
 }

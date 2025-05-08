@@ -9,9 +9,11 @@
 <body>
 <div class="hero">
     <header class="header">
-        <figure>
-            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
-        </figure>
+        <a href="/">
+            <figure>
+                <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
+            </figure>
+        </a>
         <nav>
             <form action="/research" method="post">
                 <input id="search-bar" name="searchQuery" placeholder="Research a song" required type="text">
@@ -38,10 +40,22 @@
                         <span id="nomeCanzone" th:text="${track.name}">Song name</span> -
                         <span id="artista" th:each="artist : ${track.artists}" th:text="${artist.name}">Artist</span>
                     </a>
-                    <audio th:src="${track.preview_url}" controls></audio>
+
+                    <!-- Link diretto all'anteprima per debug -->
+                    <p th:if="${track.preview_url != null}">
+                        Preview URL: <a th:href="${track.preview_url}" th:text="${track.preview_url}" target="_blank"></a>
+                    </p>
+
+                    <!-- Audio player se disponibile -->
+                    <audio th:if="${track.preview_url != null}" th:src="${track.preview_url}" controls></audio>
+
+                    <!-- Messaggio se l'audio non è disponibile -->
+                    <p th:if="${track.preview_url == null}" style="color: gray;">No preview available for this track.</p>
 
                     <!-- Form per aggiungere la canzone alla playlist -->
-                    <form th:action="@{/playlist/{nomePlaylist}/add(trackName=${track.name}, trackArtist=${track.artists[0].name})}" method="post" style="display:inline;">
+                    <form action="/addSongToPlaylist" method="post" style="display:inline;">
+                        <input type="hidden" name="trackName" th:value="${track.name}">
+                        <input type="hidden" name="trackArtist" th:value="${track.artists[0].name}">
                         <select name="nomePlaylist" required>
                             <option th:each="playlist : ${playlists}" th:value="${playlist}" th:text="${playlist}"></option>
                         </select>

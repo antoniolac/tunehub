@@ -9,9 +9,12 @@
 <body>
 <div class="hero">
     <header class="header">
-        <figure>
+        <a href="/">
+            <figure>
             <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
         </figure>
+        </a>
+
         <nav>
             <form action="/research" method="post">
                 <input id="search-bar" type="text" name="searchQuery" placeholder="Research a song" required>
@@ -23,19 +26,28 @@
         <h3>Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
         <div class="orange-border"></div>
 
-        <!-- Messaggio di successo -->
+        <!-- Messaggio di successo o errore -->
         <div th:if="${message != null}">
             <p th:text="${message}"></p>
         </div>
-
-        <!-- Visualizzazione delle canzoni nella playlist -->
-        <div th:if="${playlist != null}">
-            <h4>Songs in the playlist:</h4>
-            <ul>
-                <li th:each="canzone : ${playlist.listaCanzoni}" th:text="${canzone}">Song Name</li>
-            </ul>
+        <div th:if="${error != null}">
+            <p th:text="${error}"></p>
         </div>
+
+        <!-- Lista delle canzoni nella playlist con il tasto per rimuovere -->
+        <h4>Songs in the playlist:</h4>
+        <ul>
+            <li th:each="canzone : ${playlist.listaCanzoni}">
+                <span th:text="${canzone}"></span>
+                <form action="/removeSongFromPlaylist" method="post" style="display:inline;">
+                    <input type="hidden" name="nomePlaylist" value="${playlist.nomePlaylist}">
+                    <input type="hidden" name="trackName" th:value="${canzone}">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        </ul>
     </main>
+
 </div>
 </body>
 </html>

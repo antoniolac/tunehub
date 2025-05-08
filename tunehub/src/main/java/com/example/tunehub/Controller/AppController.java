@@ -2,7 +2,6 @@ package com.example.tunehub.Controller;
 
 import com.example.tunehub.POJO.Playlist;
 import com.example.tunehub.POJO.PlaylistManager;
-
 import com.example.tunehub.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,15 +79,12 @@ public class AppController {
 
         // Trova la playlist richiesta
         Playlist playlist = playlists.stream()
-                .filter(p -> {
-                    return p.getNomePlaylist().equals(nomePlaylist);
-                })
+                .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
                 .findFirst()
                 .orElse(new Playlist(nomePlaylist));
 
         model.addAttribute("playlist", playlist);
         return "playlistSong";
-
     }
 
     @PostMapping("/research")
@@ -135,6 +131,44 @@ public class AppController {
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("error", "Errore nell'aggiunta della canzone: " + e.getMessage());
+
+            // Crea un oggetto playlist vuoto per evitare errori nel template
+            Playlist emptyPlaylist = new Playlist(nomePlaylist);
+            model.addAttribute("playlist", emptyPlaylist);
+        }
+
+        return "playlistSong";
+    }
+
+    @PostMapping("/removeSongFromPlaylist")
+    public String removeSongFromPlaylist(
+            @RequestParam String nomePlaylist,
+            @RequestParam String trackName,
+            Model model) {
+
+        try {
+            // Carica le playlist esistenti
+            List<Playlist> playlists = getPlaylistsFromManager();
+
+            // Trova la playlist da aggiornare
+            Playlist playlist = playlists.stream()
+                    .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                    .findFirst()
+                    .orElseThrow(() -> new IOException("Playlist non trovata"));
+
+            // Rimuovi la canzone dalla playlist
+            playlist.getListaCanzoni().remove(trackName);
+
+            // Salva la playlist aggiornata
+            PlaylistManager.salvaPlaylist(playlists);
+
+            // Aggiungi la playlist aggiornata al modello
+            model.addAttribute("playlist", playlist);
+            model.addAttribute("message", "Canzone rimossa con successo!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Errore nella rimozione della canzone: " + e.getMessage());
 
             // Crea un oggetto playlist vuoto per evitare errori nel template
             Playlist emptyPlaylist = new Playlist(nomePlaylist);

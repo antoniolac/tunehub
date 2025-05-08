@@ -6,7 +6,8 @@
 @import "border.css";
 @import "button.css";
 @import "search-bar.css";
-
+@import "list.css";
+@import "selector-playlist.css";
 body {
     margin: 0;
     padding: 0;

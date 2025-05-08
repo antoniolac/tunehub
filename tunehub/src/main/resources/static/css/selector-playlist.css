@@ -1,0 +1,12 @@
+select{
+    color: black;
+    background-color: orange;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    width: 200px;
+    font-weight: bold;
+}

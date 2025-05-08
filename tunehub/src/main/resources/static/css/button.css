@@ -1,6 +1,6 @@
 #search-btn {
     background-color: orange;
-    color: white;
+    color: black;
     border: 2px solid black;
     border-radius: 12px;
     padding: 10px 20px;
@@ -10,5 +10,20 @@
 }
 
 #search-btn:hover {
+    background-color: darkorange;
+}
+
+#button-add{
+    background-color: orange;
+    color: black;
+    border: 2px solid black;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#button-add:hover {
     background-color: darkorange;
 }

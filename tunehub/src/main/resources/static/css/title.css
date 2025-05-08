@@ -9,3 +9,14 @@ h3{
     margin-top: 0;
     margin-bottom: 20px;
 }
+
+h4{
+    color: white;
+    text-align: left;
+    margin-left: 52px;
+    font-weight: 400;
+    line-height: 100%;
+    font-family: 'Playfair Display SC';
+    font-size: 40px;
+}
+

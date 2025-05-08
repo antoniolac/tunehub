@@ -2,15 +2,18 @@ package com.example.tunehub.Controller;
 
 import com.example.tunehub.POJO.Playlist;
 import com.example.tunehub.POJO.PlaylistManager;
+
 import com.example.tunehub.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class AppController {
@@ -18,126 +21,126 @@ public class AppController {
     @Autowired
     private SpotifyService spotifyService;
 
-    // Carica le playlist dal file CSV quando l'app parte
-    private List<Playlist> playlistList;
-
-    public AppController() {
+    private List<Playlist> getPlaylistsFromManager() {
         try {
-            playlistList = PlaylistManager.caricaPlaylist();  // Carica le playlist dal file CSV
+            return PlaylistManager.caricaPlaylist();
         } catch (IOException e) {
-            playlistList = new ArrayList<>();  // Se c'è un errore nel caricamento, inizializza una lista vuota
             e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("playlistForm", new Playlist("")); // Oggetto per il form
-        model.addAttribute("playlists", getNomiPlaylist());  // Passa solo i nomi delle playlist
-        return "index";  // index.html
+    public String index(Model model) {
+        // Carica le playlist dal file CSV
+        List<Playlist> playlists = getPlaylistsFromManager();
+
+        // Passa i nomi delle playlist esistenti
+        model.addAttribute("playlists", playlists.stream()
+                .map(Playlist::getNomePlaylist)
+                .collect(Collectors.toList()));
+        // Assicurati che il modello includa l'oggetto playlistForm
+        model.addAttribute("playlistForm", new Playlist());
+        return "index";
     }
 
     @PostMapping("/playlist")
-    public String creaPlaylist(@ModelAttribute("playlistForm") Playlist nuova, Model model) {
-        playlistList.add(nuova);  // Aggiungi la nuova playlist alla lista
+    public String createPlaylist(@ModelAttribute("playlistForm") Playlist playlistForm, Model model) {
         try {
-            PlaylistManager.salvaPlaylist(playlistList);  // Salva le playlist nel file CSV
-        } catch (IOException e) {
-            model.addAttribute("message", "Errore nel salvataggio della playlist.");
-            e.printStackTrace();
-        }
-        return "redirect:/";  // Torna alla home dopo aver creato la playlist
-    }
+            // Carica le playlist esistenti
+            List<Playlist> playlists = getPlaylistsFromManager();
 
-    private List<String> getNomiPlaylist() {
-        List<String> nomi = new ArrayList<>();
-        for (Playlist p : playlistList) {
-            try {
-                String encoded = java.net.URLEncoder.encode(p.getNomePlaylist(), java.nio.charset.StandardCharsets.UTF_8.toString());
-                nomi.add(encoded);  // Aggiungi la versione codificata
-            } catch (Exception e) {
-                nomi.add(p.getNomePlaylist());  // In caso di errore, aggiungi il nome normale
+            String nomePlaylist = playlistForm.getNomePlaylist();
+
+            // Verifica se la playlist esiste già
+            boolean exists = playlists.stream()
+                    .anyMatch(p -> p.getNomePlaylist().equals(nomePlaylist));
+
+            if (!exists) {
+                // Crea nuova playlist vuota
+                Playlist newPlaylist = new Playlist(nomePlaylist);
+                playlists.add(newPlaylist);
+                // Salva la lista aggiornata
+                PlaylistManager.salvaPlaylist(playlists);
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Errore nella creazione della playlist: " + e.getMessage());
+            return "index";
         }
-        return nomi;
+
+        return "redirect:/";
     }
 
     @GetMapping("/playlist/{nomePlaylist}")
-    public String mostraCanzoni(@PathVariable("nomePlaylist") String nomePlaylist, Model model) {
-        // Decodifica il nomePlaylist se è stato codificato nell'URL
-        try {
-            nomePlaylist = java.net.URLDecoder.decode(nomePlaylist, java.nio.charset.StandardCharsets.UTF_8.toString());
-        } catch (Exception e) {
-            model.addAttribute("message", "Errore nella decodifica del nome della playlist.");
-            return "index";  // Torna alla home se c'è un errore
-        }
+    public String viewPlaylist(@PathVariable String nomePlaylist, Model model) {
+        // Carica le playlist esistenti
+        List<Playlist> playlists = getPlaylistsFromManager();
 
-        Playlist playlistSelezionata = null;
+        // Trova la playlist richiesta
+        Playlist playlist = playlists.stream()
+                .filter(p -> {
+                    return p.getNomePlaylist().equals(nomePlaylist);
+                })
+                .findFirst()
+                .orElse(new Playlist(nomePlaylist));
 
-        // Cerca la playlist con il nome specificato
-        for (Playlist p : playlistList) {
-            if (p.getNomePlaylist().equals(nomePlaylist)) {
-                playlistSelezionata = p;
-                break;
-            }
-        }
+        model.addAttribute("playlist", playlist);
+        return "playlistSong";
 
-        if (playlistSelezionata == null) {
-            model.addAttribute("message", "Playlist non trovata");
-            return "index";  // Torna alla home se la playlist non viene trovata
-        }
-
-        // Passa l'oggetto playlist alla vista solo se non è null
-        model.addAttribute("playlist", playlistSelezionata);
-        if (playlistSelezionata.getListaCanzoni().isEmpty()) {
-            model.addAttribute("message", "Questa playlist è vuota.");
-        } else {
-            model.addAttribute("canzoni", playlistSelezionata.getListaCanzoni());
-        }
-
-        return "playlistSong";  // Mostra la vista con le canzoni
     }
 
-    // Endpoint per la ricerca delle tracce
     @PostMapping("/research")
-    public String ricercaCanzoni(@RequestParam("searchQuery") String searchQuery, Model model) {
-        // Cerca canzoni (questa parte dipende dalla tua implementazione della ricerca)
-        List<Map<String, Object>> tracks = spotifyService.searchTracks(searchQuery);  // Usa il servizio per cercare tracce
+    public String searchSongs(@RequestParam String searchQuery, Model model) {
+        try {
+            // Effettua la ricerca tramite SpotifyService
+            List<Map<String, Object>> tracks = spotifyService.searchTracks(searchQuery);
+            model.addAttribute("tracks", tracks);
 
-        // Passa i risultati alla vista
-        model.addAttribute("tracks", tracks);
-        model.addAttribute("playlists", getNomiPlaylist());  // Passa le playlist esistenti
-        return "research";  // La vista che mostra i risultati della ricerca
+            // Passa anche i nomi delle playlist disponibili per il dropdown
+            List<Playlist> playlists = getPlaylistsFromManager();
+            model.addAttribute("playlists", playlists.stream()
+                    .map(Playlist::getNomePlaylist)
+                    .collect(Collectors.toList()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Errore durante la ricerca: " + e.getMessage());
+        }
+        return "research";
     }
 
-    // Metodo per aggiungere una canzone alla playlist
-    // Metodo per aggiungere una canzone alla playlist
     @PostMapping("/addSongToPlaylist")
-    public String aggiungiCanzone(
-            @RequestParam String nomePlaylist,
+    public String addSongToPlaylist(
             @RequestParam String trackName,
             @RequestParam String trackArtist,
+            @RequestParam String nomePlaylist,
             Model model) {
-        try {
-            // Chiamata con tre parametri, come richiesto
-            PlaylistManager.aggiungiCanzoneAllaPlaylist(
-                    nomePlaylist,
-                    trackName,
-                    trackArtist
-            );
 
-            // Ricarica la playlist aggiornata
-            Playlist playlist = PlaylistManager.ottieniPlaylist(nomePlaylist);
-            model.addAttribute("playlist", playlist);
-            model.addAttribute("message", "Canzone aggiunta alla playlist!");
+        try {
+            // Aggiungi la canzone alla playlist tramite PlaylistManager
+            PlaylistManager.aggiungiCanzoneAllaPlaylist(nomePlaylist, trackName, trackArtist);
+
+            // Carica la playlist aggiornata per mostrarla
+            List<Playlist> playlists = getPlaylistsFromManager();
+            Playlist updatedPlaylist = playlists.stream()
+                    .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                    .findFirst()
+                    .orElseThrow(() -> new IOException("Playlist non trovata"));
+
+            model.addAttribute("playlist", updatedPlaylist);
+            model.addAttribute("message", "Canzone aggiunta alla playlist con successo!");
+
         } catch (IOException e) {
-            model.addAttribute("message", "Errore nell'aggiungere la canzone alla playlist!");
             e.printStackTrace();
+            model.addAttribute("error", "Errore nell'aggiunta della canzone: " + e.getMessage());
+
+            // Crea un oggetto playlist vuoto per evitare errori nel template
+            Playlist emptyPlaylist = new Playlist(nomePlaylist);
+            model.addAttribute("playlist", emptyPlaylist);
         }
 
         return "playlistSong";
     }
-
-
-
 }

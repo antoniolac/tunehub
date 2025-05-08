@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,35 +24,40 @@
         <h3>Risultati della ricerca</h3>
         <div class="orange-border"></div>
 
-        <!-- Messaggio se non ci sono risultati -->
-        <div th:if="${message != null}">
-            <p th:text="${message}"></p>
+        <div th:if="${error != null}" class="error">
+            <p th:text="${error}"></p>
         </div>
 
-        <!-- Visualizzazione delle tracce -->
-        <div th:if="${tracks != null}">
+        <div th:if="${tracks != null and !tracks.empty}">
             <h4>Canzoni trovate:</h4>
-            <ul>
+            <ul class="track-list">
                 <li th:each="track : ${tracks}">
-                    <a th:href="@{${track.external_urls.spotify}}" target="_blank">
-                        <span th:text="${track.name}">Nome canzone</span> -
-                        <span th:each="artist : ${track.artists}" th:text="${artist.name}">Artista</span>
-                    </a>
-                    <audio th:src="${track.preview_url}" controls></audio>
+                    <div class="track-info">
+                        <a th:href="${track.external_urls.spotify}" target="_blank">
+                            <span th:text="${track.name}"></span> -
+                            <span th:each="artist,iter : ${track.artists}">
+                                <span th:text="${artist.name}"></span>
+                                <span th:unless="${iter.last}">, </span>
+                            </span>
+                        </a>
+                        <audio th:if="${track.preview_url}" th:src="${track.preview_url}" controls></audio>
 
-                    <!-- Form per aggiungere la canzone alla playlist -->
-                    <form th:action="@{/playlist/{nomePlaylist}/add(trackName=${track.name}, trackArtist=${track.artists[0].name})}" method="post" style="display:inline;">
-                        <select name="nomePlaylist" required>
-                            <option th:each="playlist : ${playlists}" th:value="${playlist}" th:text="${playlist}"></option>
-                        </select>
-                        <button type="submit">Aggiungi alla Playlist</button>
-                    </form>
+                        <form action="/addSongToPlaylist" method="post">
+                            <input type="hidden" name="trackName" th:value="${track.name}">
+                            <input type="hidden" name="trackArtist" th:value="${track.artists[0].name}">
+                            <select name="nomePlaylist" required>
+                                <option value="">Seleziona playlist</option>
+                                <option th:each="playlist : ${playlists}"
+                                        th:value="${playlist}"
+                                        th:text="${playlist}"></option>
+                            </select>
+                            <button type="submit">Aggiungi</button>
+                        </form>
+                    </div>
                 </li>
             </ul>
         </div>
     </main>
-
-    <footer></footer>
 </div>
 </body>
 </html>

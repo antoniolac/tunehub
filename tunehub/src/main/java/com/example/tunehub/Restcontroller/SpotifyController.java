@@ -2,11 +2,7 @@ package com.example.tunehub.Restcontroller;
 
 import com.example.tunehub.SpotifyService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
@@ -20,16 +16,15 @@ public class SpotifyController {
         this.spotifyService = spotifyService;
     }
 
-    // Endpoint per cercare le tracce per titolo
     @GetMapping("/search")
-    public List<Map<String, Object>> searchTracks(@RequestParam("title") String title) {
+    public ResponseEntity<?> searchTracks(@RequestParam("title") String title) {
         if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Query string is missing");
+            return ResponseEntity.badRequest().body("La query di ricerca non può essere vuota");
         }
-
-        // Usa il SpotifyService per cercare le tracce
-        return spotifyService.searchTracks(title); // Restituisce la lista delle tracce in formato JSON
+        try {
+            return ResponseEntity.ok(spotifyService.searchTracks(title));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Errore durante la ricerca");
+        }
     }
-
-
 }

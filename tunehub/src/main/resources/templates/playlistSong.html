@@ -14,13 +14,13 @@
         </figure>
         <nav>
             <form action="/research" method="post">
-                <input type="text" name="searchQuery" placeholder="Cerca una canzone" required>
-                <button id="search-btn" type="submit">Search</button>
+                <input id="search-bar" type="text" name="searchQuery" placeholder="Research a song" required>
+                <button id="search-button" type="submit">Search</button>
             </form>
         </nav>
     </header>
     <main>
-        <h3>Dettagli Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
+        <h3>Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
         <div class="orange-border"></div>
 
         <!-- Messaggio di successo -->
@@ -30,9 +30,9 @@
 
         <!-- Visualizzazione delle canzoni nella playlist -->
         <div th:if="${playlist != null}">
-            <h4>Canzoni nella playlist:</h4>
+            <h4>Songs in the playlist:</h4>
             <ul>
-                <li th:each="canzone : ${playlist.listaCanzoni}" th:text="${canzone}">Nome canzone</li>
+                <li th:each="canzone : ${playlist.listaCanzoni}" th:text="${canzone}">Song Name</li>
             </ul>
         </div>
     </main>

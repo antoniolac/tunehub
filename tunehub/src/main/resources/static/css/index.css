@@ -8,6 +8,7 @@
 @import "search-bar.css";
 @import "list.css";
 @import "selector-playlist.css";
+@import "form.css";
 body {
     margin: 0;
     padding: 0;

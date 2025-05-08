@@ -14,14 +14,14 @@
         </figure>
         <nav>
             <form action="/research" method="post">
-                <input name="searchQuery" placeholder="Cerca una canzone" required type="text">
-                <button type="submit">Cerca</button>
+                <input id="search-bar" name="searchQuery" placeholder="Research a song" required type="text">
+                <button id="search-button" type="submit">Search</button>
             </form>
         </nav>
     </header>
 
     <main>
-        <h3>Risultati della ricerca</h3>
+        <h3>Search Results</h3>
         <div class="orange-border"></div>
 
         <!-- Messaggio se non ci sono risultati -->
@@ -31,12 +31,12 @@
 
         <!-- Visualizzazione delle tracce -->
         <div th:if="${tracks != null}">
-            <h4>Canzoni trovate:</h4>
+            <h4>Results:</h4>
             <ul>
                 <li th:each="track : ${tracks}">
                     <a th:href="@{${track.external_urls.spotify}}" target="_blank">
-                        <span th:text="${track.name}">Nome canzone</span> -
-                        <span th:each="artist : ${track.artists}" th:text="${artist.name}">Artista</span>
+                        <span id="nomeCanzone" th:text="${track.name}">Song name</span> -
+                        <span id="artista" th:each="artist : ${track.artists}" th:text="${artist.name}">Artist</span>
                     </a>
                     <audio th:src="${track.preview_url}" controls></audio>
 
@@ -45,7 +45,7 @@
                         <select name="nomePlaylist" required>
                             <option th:each="playlist : ${playlists}" th:value="${playlist}" th:text="${playlist}"></option>
                         </select>
-                        <button type="submit">Aggiungi alla Playlist</button>
+                        <button id="button-add" type="submit">Add to playlist</button>
                     </form>
                 </li>
             </ul>

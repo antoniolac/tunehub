@@ -13,8 +13,8 @@
             <img src="/images/tune-removebg-preview%20(1)%201.png" alt="">
         </figure>
         <nav>
-            <form action="/research" method="post">
-                <input name="searchQuery" placeholder="Cerca una canzone" required type="text">
+            <form action="/research" method="post" id="research-form">
+                <input name="searchQuery" placeholder="Research a song" required type="text" id="search-bar">
                 <button type="submit">Search</button>
             </form>
             <figure>
@@ -28,14 +28,14 @@
         <h3>MY PLAYLIST</h3>
         <!-- FORM CREAZIONE PLAYLIST -->
         <form th:action="@{/playlist}" th:object="${playlistForm}" method="post">
-            <label for="nomePlaylist">Nome nuova playlist:</label>
+            <label for="nomePlaylist">Name new playlist:</label>
             <input type="text" id="nomePlaylist" th:field="*{nomePlaylist}" required>
-            <button type="submit" id="add-btn">Aggiungi</button>
+            <button type="submit" id="add-btn">Add</button>
         </form>
 
         <!-- VISUALIZZAZIONE PLAYLIST -->
         <div>
-            <h4>Playlist create:</h4>
+            <h4>Created Playlist:</h4>
             <ul>
                 <!-- Ciclo per ogni playlist -->
                 <li style="color: white" th:each="item : ${playlists}">

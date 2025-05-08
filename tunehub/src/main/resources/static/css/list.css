@@ -13,5 +13,13 @@ a{
 }
 
 span{
+    font-size: 60px;
+}
+
+#artista{
+    font-size: 20px;
+}
+
+#nomeCanzone{
     font-size: 20px;
 }

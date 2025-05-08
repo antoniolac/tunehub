@@ -62,7 +62,7 @@ public class Playlist {
     // Metodo per caricare le playlist dal file CSV
     public static List<Playlist> caricaPlaylist() throws IOException {
         List<Playlist> playlists = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader("playlists.csv"));
+        BufferedReader reader = new BufferedReader(new FileReader("data/playlists.csv"));
         String line;
         while ((line = reader.readLine()) != null) {
             String[] data = line.split(",");
@@ -78,7 +78,7 @@ public class Playlist {
 
     // Metodo per salvare le playlist nel file CSV
     public static void salvaPlaylist(List<Playlist> playlists) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("playlists.csv"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("data/playlists.csv"));
         for (Playlist playlist : playlists) {
             writer.write(playlist.getNomePlaylist());  // Scrivi il nome della playlist
             for (String[] canzone : playlist.getListaCanzoni()) {

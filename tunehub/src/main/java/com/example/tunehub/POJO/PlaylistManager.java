@@ -9,35 +9,47 @@ public class PlaylistManager {
 
     // Metodo per caricare tutte le playlist dal file CSV
     public static List<Playlist> caricaPlaylist() throws IOException {
-        List<Playlist> playlists = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] data = line.split(",");  // La prima colonna è il nome della playlist, le altre sono le canzoni
-            Playlist playlist = new Playlist(data[0]);  // Nome della playlist
-            // Aggiungi ciascuna canzone separando titolo e artista
-            for (int i = 1; i < data.length; i += 2) { // Incremento di 2 per gestire titolo e artista
-                String titolo = data[i];
-                String artista = data[i + 1];
-                playlist.aggiungiCanzone(titolo, artista);  // Aggiungi la canzone alla playlist
-            }
-            playlists.add(playlist);  // Aggiungi la playlist alla lista
+        File file = new File(FILE_NAME);
+        // Controlla se la directory esiste, altrimenti la crea
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
         }
-        reader.close();
+
+        // Controlla se il file esiste, altrimenti lo crea
+        if (!file.exists()) {
+            file.createNewFile();  // Crea il file vuoto se non esiste
+            return new ArrayList<>();  // Ritorna una lista vuota se non ci sono playlist
+        }
+
+        List<Playlist> playlists = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");  // La prima colonna è il nome della playlist, le altre sono le canzoni
+                Playlist playlist = new Playlist(data[0]);  // Nome della playlist
+                // Aggiungi ciascuna canzone separando titolo e artista
+                for (int i = 1; i < data.length; i += 2) { // Incremento di 2 per gestire titolo e artista
+                    String titolo = data[i];
+                    String artista = data[i + 1];
+                    playlist.aggiungiCanzone(titolo, artista);  // Aggiungi la canzone alla playlist
+                }
+                playlists.add(playlist);  // Aggiungi la playlist alla lista
+            }
+        }
         return playlists;
     }
 
     // Metodo per salvare tutte le playlist nel file CSV
     public static void salvaPlaylist(List<Playlist> playlists) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME));
-        for (Playlist playlist : playlists) {
-            writer.write(playlist.getNomePlaylist());  // Scrivi il nome della playlist
-            for (String[] canzone : playlist.getListaCanzoni()) {
-                writer.write("," + canzone[0] + "," + canzone[1]);  // Scrivi titolo e artista separati da virgola
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            for (Playlist playlist : playlists) {
+                writer.write(playlist.getNomePlaylist());  // Scrivi il nome della playlist
+                for (String[] canzone : playlist.getListaCanzoni()) {
+                    writer.write("," + canzone[0] + "," + canzone[1]);  // Scrivi titolo e artista separati da virgola
+                }
+                writer.newLine();  // Vai alla riga successiva
             }
-            writer.newLine();  // Vai alla riga successiva
         }
-        writer.close();
     }
 
     // Metodo per aggiungere una canzone a una playlist esistente o crearne una nuova

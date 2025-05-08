@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dettagli Playlist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Details</title>
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
@@ -19,24 +19,20 @@
             </form>
         </nav>
     </header>
-    <main style="color :white">
+    <main>
         <h3>Dettagli Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
         <div class="orange-border"></div>
 
-        <!-- Messaggio di errore se la playlist non viene trovata -->
+        <!-- Messaggio di successo -->
         <div th:if="${message != null}">
             <p th:text="${message}"></p>
         </div>
 
         <!-- Visualizzazione delle canzoni nella playlist -->
-        <div th:if="${canzoni != null}">
+        <div th:if="${playlist != null}">
             <h4>Canzoni nella playlist:</h4>
             <ul>
-                <!-- Ciclo per visualizzare ogni canzone (titolo e artista) -->
-                <li th:each="canzone : ${canzoni}">
-                    <span th:text="${canzone[0]}">Titolo della canzone</span> -
-                    <span th:text="${canzone[1]}">Artista della canzone</span>
-                </li>
+                <li th:each="canzone : ${playlist.listaCanzoni}" th:text="${canzone}">Nome canzone</li>
             </ul>
         </div>
     </main>

@@ -3,51 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlist Details</title>
+    <title>Playlist Details - Tunehub</title>
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
 <div class="hero">
     <header class="header">
-        <a href="/">
-            <figure>
-            <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
-        </figure>
-        </a>
+        <div class="logo-container">
+            <a href="/">
+                <figure>
+                    <img src="/images/tune-removebg-preview%20(1)%201.png" alt="Logo TuneHub">
+                </figure>
+            </a>
+        </div>
 
         <nav>
             <form action="/research" method="post">
                 <input id="search-bar" type="text" name="searchQuery" placeholder="Research a song" required>
                 <button id="search-button" type="submit">Search</button>
             </form>
+            <div class="user-profile">
+                <figure>
+                    <img src="/images/user%20preview%201.png" alt="User Profile">
+                </figure>
+            </div>
         </nav>
     </header>
+
     <main>
         <h3>Playlist: <span th:text="${playlist.nomePlaylist}"></span></h3>
+        <p class="subtitle">Enjoy your music collection</p>
         <div class="orange-border"></div>
 
         <!-- Messaggio di successo o errore -->
-        <div th:if="${message != null}">
+        <div th:if="${message != null}" class="message-container success-message">
             <p th:text="${message}"></p>
         </div>
-        <div th:if="${error != null}">
+        <div th:if="${error != null}" class="message-container error-message">
             <p th:text="${error}"></p>
         </div>
 
-        <!-- Lista delle canzoni nella playlist con il tasto per rimuovere -->
-        <h4>Songs in the playlist:</h4>
-        <ul>
-            <li th:each="canzone : ${playlist.listaCanzoni}">
-                <span th:text="${canzone}"></span>
-                <form action="/removeSongFromPlaylist" method="post" style="display:inline;">
-                    <input type="hidden" name="nomePlaylist" value="${playlist.nomePlaylist}">
-                    <input type="hidden" name="trackName" th:value="${canzone}">
-                    <button type="submit">Remove</button>
-                </form>
-            </li>
-        </ul>
-    </main>
+        <div class="playlist-details">
+            <!-- Lista delle canzoni nella playlist con il tasto per rimuovere -->
+            <h4>Songs in the playlist</h4>
 
+            <ul>
+                <li th:each="canzone : ${playlist.listaCanzoni}">
+                    <div class="song-item">
+                        <div class="song-info">
+                            <span th:text="${canzone}"></span>
+                        </div>
+                        <form action="/removeSongFromPlaylist" method="post" class="action-form">
+                            <input type="hidden" name="nomePlaylist" th:value="${playlist.nomePlaylist}">
+                            <input type="hidden" name="trackName" th:value="${canzone}">
+                            <button type="submit" class="remove-song-btn">Remove</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Form per eliminare l'intera playlist -->
+            <form action="/deletePlaylist" method="post" style="margin-top: 30px; margin-left: 52px;">
+                <input type="hidden" name="nomePlaylist" th:value="${playlist.nomePlaylist}">
+                <button type="submit" class="delete-btn">Delete Playlist</button>
+            </form>
+        </div>
+    </main>
 </div>
 </body>
 </html>

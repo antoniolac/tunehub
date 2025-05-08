@@ -1,20 +1,35 @@
-#search-bar{
-    padding: 10px 15px;
+/* Stile generale per i form */
+form {
+    margin: 10px 0;
+}
+
+/* Input di ricerca */
+#search-bar {
+    padding: 12px 15px;
     border: 2px solid orange;
     border-radius: 20px 0 0 20px;
     outline: none;
-    width: 200px;
+    width: 250px;
     font-size: 16px;
     background-color: orange;
+    color: black;
+    transition: all 0.3s ease;
+    font-family: 'Roboto Condensed', sans-serif;
 }
 
-label{
-    color: white;
-    padding-left: 53px;
+#search-bar:focus {
+    background-color: #ffb84d;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.6);
 }
 
-#search-button{
-    padding: 10px 15px;
+#search-bar::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+}
+
+/* Pulsante di ricerca */
+#search-button {
+    padding: 12px 15px;
     background-color: orange;
     color: black;
     border: 2px solid orange;
@@ -22,14 +37,80 @@ label{
     border-radius: 0 20px 20px 0;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-family: 'Roboto Condensed', sans-serif;
 }
 
-#search-button:hover{
+#search-button:hover {
     background-color: darkorange;
+    box-shadow: 0 2px 5px rgba(255, 165, 0, 0.4);
 }
 
-#search-button::placeholder {
-    color: black;                /* colore del placeholder */
-    opacity: 1
+/* Etichette */
+label {
+    color: white;
+    padding-left: 53px;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+/* Input per il nome della playlist */
+#nomePlaylist {
+    padding: 12px 15px;
+    border: 2px solid orange;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+    width: 250px;
+    font-size: 16px;
+    background-color: orange;
+    color: black;
+    transition: all 0.3s ease;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+#nomePlaylist:focus {
+    background-color: #ffb84d;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.6);
+}
+
+#nomePlaylist::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+}
+
+/* Pulsante di aggiunta playlist */
+#add-btn {
+    padding: 12px 15px;
+    background-color: orange;
+    color: black;
+    border: 2px solid orange;
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+#add-btn:hover {
+    background-color: darkorange;
+    box-shadow: 0 2px 5px rgba(255, 165, 0, 0.4);
+}
+
+/* Allineamento di form specifici */
+.form-group {
+    margin-bottom: 20px;
+    margin-left: 52px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.action-form {
+    display: inline-block;
+    margin: 0 5px;
 }

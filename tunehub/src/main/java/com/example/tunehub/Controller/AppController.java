@@ -147,23 +147,17 @@ public class AppController {
             Model model) {
 
         try {
-            // Carica le playlist esistenti
-            List<Playlist> playlists = getPlaylistsFromManager();
+            // Rimuovi la canzone dalla playlist tramite PlaylistManager
+            PlaylistManager.rimuoviCanzoneDallaPlaylist(nomePlaylist, trackName);
 
-            // Trova la playlist da aggiornare
-            Playlist playlist = playlists.stream()
+            // Carica la playlist aggiornata per mostrarla
+            List<Playlist> playlists = getPlaylistsFromManager();
+            Playlist updatedPlaylist = playlists.stream()
                     .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
                     .findFirst()
                     .orElseThrow(() -> new IOException("Playlist non trovata"));
 
-            // Rimuovi la canzone dalla playlist
-            playlist.getListaCanzoni().remove(trackName);
-
-            // Salva la playlist aggiornata
-            PlaylistManager.salvaPlaylist(playlists);
-
-            // Aggiungi la playlist aggiornata al modello
-            model.addAttribute("playlist", playlist);
+            model.addAttribute("playlist", updatedPlaylist);
             model.addAttribute("message", "Canzone rimossa con successo!");
 
         } catch (IOException e) {
@@ -176,5 +170,27 @@ public class AppController {
         }
 
         return "playlistSong";
+    }
+
+    @PostMapping("/deletePlaylist")
+    public String deletePlaylist(@RequestParam String nomePlaylist, Model model) {
+        try {
+            // Elimina la playlist tramite PlaylistManager
+            PlaylistManager.eliminaPlaylist(nomePlaylist);
+            return "redirect:/";
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            // In caso di errore, torna alla pagina della playlist con un messaggio di errore
+            List<Playlist> playlists = getPlaylistsFromManager();
+            Playlist playlist = playlists.stream()
+                    .filter(p -> p.getNomePlaylist().equals(nomePlaylist))
+                    .findFirst()
+                    .orElse(new Playlist(nomePlaylist));
+
+            model.addAttribute("playlist", playlist);
+            model.addAttribute("error", "Errore nell'eliminazione della playlist: " + e.getMessage());
+            return "playlistSong";
+        }
     }
 }

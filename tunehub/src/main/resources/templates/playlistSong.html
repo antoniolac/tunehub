@@ -35,7 +35,7 @@
         <p class="subtitle">Enjoy your music collection</p>
         <div class="orange-border"></div>
 
-        <!-- Messaggio di successo o errore -->
+        <!-- Messaggio successo/errore -->
         <div th:if="${message != null}" class="message-container success-message">
             <p th:text="${message}"></p>
         </div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="playlist-details">
-            <!-- Lista delle canzoni nella playlist con il tasto per rimuovere -->
+            <!-- Lista canzoni playlist -->
             <h4>Songs in the playlist</h4>
 
             <ul>
@@ -62,7 +62,7 @@
                 </li>
             </ul>
 
-            <!-- Form per eliminare l'intera playlist -->
+            <!-- Eliminazione playlist -->
             <form action="/deletePlaylist" method="post" style="margin-top: 30px; margin-left: 52px;">
                 <input type="hidden" name="nomePlaylist" th:value="${playlist.nomePlaylist}">
                 <button type="submit" class="delete-btn">Delete Playlist</button>

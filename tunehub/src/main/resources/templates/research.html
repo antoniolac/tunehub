@@ -35,7 +35,7 @@
         <p class="subtitle">Discover and add songs to your playlists</p>
         <div class="orange-border"></div>
 
-        <!-- Messaggio se non ci sono risultati -->
+        <!-- Messaggio non ci sono risultati -->
         <div th:if="${message != null}" class="message-container">
             <p th:text="${message}"></p>
         </div>
@@ -44,7 +44,7 @@
             <p th:text="${error}"></p>
         </div>
 
-        <!-- Visualizzazione delle tracce -->
+        <!-- Visualizzazione canzoni -->
         <div th:if="${tracks != null}">
             <h4>Results</h4>
 
@@ -62,11 +62,11 @@
                                 <audio th:src="${track.preview_url}" controls></audio>
                             </div>
 
-                            <!-- Messaggio se l'audio non è disponibile -->
+                            <!-- Messaggio audio non disponibile -->
                             <p th:if="${track.preview_url == null}" style="color: gray; font-size: 14px; margin-top: 5px;">No preview available for this track.</p>
                         </div>
 
-                        <!-- Form per aggiungere la canzone alla playlist -->
+                        <!-- Aggiungere canzone playlist -->
                         <form action="/addSongToPlaylist" method="post" class="action-form">
                             <input type="hidden" name="trackName" th:value="${track.name}">
                             <input type="hidden" name="trackArtist" th:value="${track.artists[0].name}">

@@ -4,21 +4,26 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+    Classe che gestisce salvataggio modifiche su file CSV
+    tutti i metodi servono per interagire con il file
+*/
+
 public class PlaylistManager {
 
     private static final String FILE_PATH = "playlists.csv";
 
+    //metodo che crea nuova playlist
     public static List<Playlist> caricaPlaylist() throws IOException {
         List<Playlist> playlists = new ArrayList<>();
         File file = new File(FILE_PATH);
 
-        // Se il file non esiste, lo crea
+        //Se il file non esiste, lo crea
         if (!file.exists()) {
             file.createNewFile();
             return playlists;
         }
 
-        // Se il file è vuoto, restituisce una lista vuota
         if (file.length() == 0) {
             return playlists;
         }
@@ -32,7 +37,6 @@ public class PlaylistManager {
                 String nomePlaylist = parts[0];
                 List<String> canzoni = new ArrayList<>();
 
-                // Aggiungi canzoni solo se ce ne sono
                 if (parts.length > 1) {
                     canzoni = Arrays.stream(parts, 1, parts.length).collect(Collectors.toList());
                 }
@@ -46,7 +50,7 @@ public class PlaylistManager {
         reader.close();
         return playlists;
     }
-
+    //metodo che salva la playlist
     public static void salvaPlaylist(List<Playlist> playlists) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH));
         for (Playlist playlist : playlists) {
@@ -63,7 +67,7 @@ public class PlaylistManager {
         }
         writer.close();
     }
-
+    //metodo che aggiunge canzone
     public static void aggiungiCanzoneAllaPlaylist(String nomePlaylist, String trackName, String trackArtist) throws IOException {
         List<Playlist> playlists = caricaPlaylist();
         Playlist playlist = playlists.stream()
@@ -75,6 +79,7 @@ public class PlaylistManager {
         salvaPlaylist(playlists);
     }
 
+    //metodo che rimuove canzone
     public static void rimuoviCanzoneDallaPlaylist(String nomePlaylist, String trackName) throws IOException {
         List<Playlist> playlists = caricaPlaylist();
         Playlist playlist = playlists.stream()
@@ -86,6 +91,7 @@ public class PlaylistManager {
         salvaPlaylist(playlists);
     }
 
+    //metodo che elimina playlist
     public static void eliminaPlaylist(String nomePlaylist) throws IOException {
         List<Playlist> playlists = caricaPlaylist();
         boolean removed = playlists.removeIf(p -> p.getNomePlaylist().equals(nomePlaylist));

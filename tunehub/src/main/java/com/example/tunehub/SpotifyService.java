@@ -11,6 +11,11 @@ import org.springframework.web.util.UriUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+
+/*
+    Classe che permette il funzionamento dell'api di spotify
+*/
+
 @Service
 public class SpotifyService {
 
@@ -22,6 +27,7 @@ public class SpotifyService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    //metodo per far funzionare api
     public String getAccessToken() {
         String credentials = Base64.getEncoder()
                 .encodeToString((clientId + ":" + clientSecret).getBytes(StandardCharsets.UTF_8));
@@ -42,6 +48,7 @@ public class SpotifyService {
         return (String) response.getBody().get("access_token");
     }
 
+    //metodo che cerca le canzoni correlate
     public List<Map<String, Object>> searchTracks(String query) {
         String token = getAccessToken();
 

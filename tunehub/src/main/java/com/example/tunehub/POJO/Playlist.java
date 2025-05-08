@@ -3,10 +3,14 @@ package com.example.tunehub.POJO;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+    Classe che gestisce playlist
+*/
 public class Playlist {
     private String nomePlaylist;
     private List<String> listaCanzoni;
 
+    //costruttori
     public Playlist() {
         this.listaCanzoni = new ArrayList<>();
     }
@@ -15,7 +19,7 @@ public class Playlist {
         this.nomePlaylist = nomePlaylist;
         this.listaCanzoni = new ArrayList<>();
     }
-
+    //getters & setters
     public String getNomePlaylist() {
         return nomePlaylist;
     }
@@ -32,6 +36,7 @@ public class Playlist {
         this.listaCanzoni = listaCanzoni;
     }
 
+    //metodo che aggiunge canzoni
     public void aggiungiCanzone(String canzone) {
         if (listaCanzoni == null) {
             listaCanzoni = new ArrayList<>();

@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/*
+    Rest controller per le chiamate all'api di Sotify
+*/
+
 @RestController
 @RequestMapping("/api/music")
 public class SpotifyController {

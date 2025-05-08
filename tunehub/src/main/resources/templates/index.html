@@ -39,12 +39,10 @@
         <div>
             <h4>Created Playlist:</h4>
             <ul>
-                <!-- Ciclo per ogni playlist -->
+
                 <li style="color: white" th:each="item : ${playlists}">
-                    <!-- Cliccando sul nome della playlist, si va alla sua pagina di dettaglio -->
+                    <!-- Pagina di dettaglio -->
                     <a th:href="@{'/playlist/' + ${item}}" th:text="${item}"></a>
-
-
 
                 </li>
             </ul>

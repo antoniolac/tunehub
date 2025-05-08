@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/*
+    Classe che gestisce endpoint e rotte
+*/
+
 @Controller
 public class AppController {
 
@@ -28,7 +32,7 @@ public class AppController {
             return new ArrayList<>();
         }
     }
-
+    //homepage
     @GetMapping("/")
     public String index(Model model) {
         // Carica le playlist dal file CSV
@@ -42,7 +46,7 @@ public class AppController {
         model.addAttribute("playlistForm", new Playlist());
         return "index";
     }
-
+    //aggiornamento playlist
     @PostMapping("/playlist")
     public String createPlaylist(@ModelAttribute("playlistForm") Playlist playlistForm, Model model) {
         try {
@@ -71,7 +75,7 @@ public class AppController {
 
         return "redirect:/";
     }
-
+    //pagina dettaglio playlist
     @GetMapping("/playlist/{nomePlaylist}")
     public String viewPlaylist(@PathVariable String nomePlaylist, Model model) {
         // Carica le playlist esistenti
@@ -86,7 +90,7 @@ public class AppController {
         model.addAttribute("playlist", playlist);
         return "playlistSong";
     }
-
+    //ricerca canzoni presenti in Spotify
     @PostMapping("/research")
     public String searchSongs(@RequestParam String searchQuery, Model model) {
         try {
@@ -106,7 +110,7 @@ public class AppController {
         }
         return "research";
     }
-
+    //aggiunta di canzoni alla playlist
     @PostMapping("/addSongToPlaylist")
     public String addSongToPlaylist(
             @RequestParam String trackName,
@@ -139,7 +143,7 @@ public class AppController {
 
         return "playlistSong";
     }
-
+    //rimozione canzone da playlist
     @PostMapping("/removeSongFromPlaylist")
     public String removeSongFromPlaylist(
             @RequestParam String nomePlaylist,
@@ -171,7 +175,7 @@ public class AppController {
 
         return "playlistSong";
     }
-
+    //eliminare playlist
     @PostMapping("/deletePlaylist")
     public String deletePlaylist(@RequestParam String nomePlaylist, Model model) {
         try {
